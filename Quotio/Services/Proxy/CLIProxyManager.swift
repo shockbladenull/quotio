@@ -2184,6 +2184,7 @@ extension CLIProxyManager {
         let repoResourcesRoot = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .deletingLastPathComponent()
+            .deletingLastPathComponent()
             .appendingPathComponent("Resources", isDirectory: true)
         let repoCandidates: [URL?] = [
             repoResourcesRoot

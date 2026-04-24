@@ -3,6 +3,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+# shellcheck source=/dev/null
+source "${SCRIPT_DIR}/config.sh"
+# This verifier does not start config.sh spinners; avoid clearing the caller's last output line.
+trap - EXIT
 
 APP_TO_VERIFY="${1:-${PROJECT_DIR}/build/Quotio.app}"
 BINARY_NAME="cli-proxy-api-plus"
@@ -10,7 +14,8 @@ RESOURCE_SUBDIRECTORY="Proxy"
 MODEL_SOURCE="${PROJECT_DIR}/Quotio/Models/ProxyVersionModels.swift"
 
 fail() {
-    echo "Bundled proxy verification failed: $1" >&2
+    log_failure "Bundled proxy verification failed"
+    log_item "$1"
     exit 1
 }
 
@@ -40,4 +45,4 @@ if [ "${ACTUAL_SHA256}" != "${EXPECTED_SHA256}" ]; then
     fail "checksum mismatch for ${BINARY_PATH}; expected ${EXPECTED_SHA256}, got ${ACTUAL_SHA256}"
 fi
 
-echo "Bundled proxy verified: ${BINARY_PATH}"
+log_success "Bundled proxy verified: ${BINARY_PATH}"
